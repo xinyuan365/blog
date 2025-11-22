@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { Post, Comment, Profile } from '@/lib/supabase'
+import { Post, Comment, ProfileDisplay } from '@/lib/supabase'
 import CommentForm from './CommentForm'
 
 // 强制动态渲染，确保数据实时更新
@@ -28,8 +28,12 @@ async function getPost(id: string) {
 
   return {
     ...post,
-    profiles: profile || null
-  } as Post & { profiles: Profile | null }
+    profiles: (profile ? {
+      id: profile.id,
+      username: profile.username,
+      avatar_url: profile.avatar_url
+    } : null) as ProfileDisplay | null
+  } as Post & { profiles: ProfileDisplay | null }
 }
 
 async function getComments(postId: string) {
@@ -47,7 +51,7 @@ async function getComments(postId: string) {
 
   // 获取所有评论者信息
   const commenterIds = Array.from(new Set(comments.map(c => c.commenter_id)))
-  let profiles: Profile[] = []
+  let profiles: ProfileDisplay[] = []
   
   if (commenterIds.length > 0) {
     const { data } = await supabase
@@ -55,7 +59,7 @@ async function getComments(postId: string) {
       .select('id, username, avatar_url')
       .in('id', commenterIds)
     
-    profiles = data || []
+    profiles = (data || []) as ProfileDisplay[]
   }
 
   // 将评论者信息关联到评论
@@ -64,7 +68,7 @@ async function getComments(postId: string) {
     profiles: profiles.find(p => p.id === comment.commenter_id) || null
   }))
 
-  return commentsWithProfiles as (Comment & { profiles: Profile | null })[]
+  return commentsWithProfiles as (Comment & { profiles: ProfileDisplay | null })[]
 }
 
 export default async function PostDetail({

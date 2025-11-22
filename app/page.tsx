@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { Post, Profile } from '@/lib/supabase'
+import { Post, ProfileDisplay } from '@/lib/supabase'
 
 // 强制动态渲染，确保数据实时更新
 export const dynamic = 'force-dynamic'
@@ -22,7 +22,7 @@ async function getPosts() {
 
   // 获取所有作者信息
   const authorIds = Array.from(new Set(posts.map(p => p.author_id)))
-  let profiles: Profile[] = []
+  let profiles: ProfileDisplay[] = []
   
   if (authorIds.length > 0) {
     const { data } = await supabase
@@ -30,7 +30,7 @@ async function getPosts() {
       .select('id, username, avatar_url')
       .in('id', authorIds)
     
-    profiles = data || []
+    profiles = (data || []) as ProfileDisplay[]
   }
 
   // 将作者信息关联到文章
@@ -39,7 +39,7 @@ async function getPosts() {
     profiles: profiles.find(p => p.id === post.author_id) || null
   }))
 
-  return postsWithProfiles as (Post & { profiles: Profile | null })[]
+  return postsWithProfiles as (Post & { profiles: ProfileDisplay | null })[]
 }
 
 export default async function Home() {

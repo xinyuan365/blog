@@ -31,6 +31,13 @@ export interface Profile {
   updated_at: string
 }
 
+// 用于显示的简化 Profile 类型（不包含 updated_at）
+export interface ProfileDisplay {
+  id: string
+  username: string
+  avatar_url?: string
+}
+
 export interface Post {
   id: string
   created_at: string
