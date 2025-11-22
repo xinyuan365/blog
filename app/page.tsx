@@ -21,7 +21,7 @@ async function getPosts() {
   }
 
   // 获取所有作者信息
-  const authorIds = [...new Set(posts.map(p => p.author_id))]
+  const authorIds = Array.from(new Set(posts.map(p => p.author_id)))
   let profiles: Profile[] = []
   
   if (authorIds.length > 0) {

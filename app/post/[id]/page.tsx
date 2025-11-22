@@ -46,7 +46,7 @@ async function getComments(postId: string) {
   }
 
   // 获取所有评论者信息
-  const commenterIds = [...new Set(comments.map(c => c.commenter_id))]
+  const commenterIds = Array.from(new Set(comments.map(c => c.commenter_id)))
   let profiles: Profile[] = []
   
   if (commenterIds.length > 0) {
