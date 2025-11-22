@@ -22,10 +22,12 @@ export default function LoginPage() {
 
     try {
       // 先尝试登录
-      let { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
+
+      let user = signInData?.user
 
       // 如果登录失败，尝试注册账号
       if (signInError) {
@@ -38,11 +40,11 @@ export default function LoginPage() {
           throw signUpError
         }
 
-        signInData = signUpData
+        user = signUpData?.user || null
       }
 
       // 确保用户有 profile
-      const user = signInData?.user
+      if (user) {
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
