@@ -45,7 +45,6 @@ export default function LoginPage() {
 
       // 确保用户有 profile
       if (user) {
-      if (user) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('id')
